@@ -1,0 +1,8 @@
+---
+- name: L05 Advanced Ansible
+  hosts: webservers
+  become: true
+  vars_files:
+    - vault/secrets.yml
+  roles:
+    - webserver

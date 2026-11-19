@@ -1,0 +1,30 @@
+---
+- name: Install packages using loop
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop:
+    - nginx
+    - curl
+    - htop
+
+- name: Print a debug message
+  ansible.builtin.debug:
+    msg: "Starting web server setup on {{ inventory_hostname }}"
+
+- name: Print the secret from Vault
+  ansible.builtin.debug:
+    var: db_password
+  when: db_password is defined
+
+- name: Copy index.html from Jinja2 template
+  ansible.builtin.template:
+    src: index.html.j2
+    dest: /var/www/html/index.html
+    mode: '0644'
+  notify: Restart Nginx
+
+- name: This task will fail, but we ignore it
+  ansible.builtin.command: /bin/false
+  ignore_errors: true
